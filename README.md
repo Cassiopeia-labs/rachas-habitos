@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rachas — gestor de hábitos
 
-## Getting Started
+App web para registrar hábitos diarios y seguir tus rachas. Next.js 16 + Firebase (Auth + Firestore), desplegada en Vercel.
 
-First, run the development server:
+Construida con un equipo de **3 agentes de Claude Code**.
+
+## El equipo de agentes
+
+| Agente | Fichero | Papel |
+|---|---|---|
+| Orquestador | [`CLAUDE.md`](CLAUDE.md) | Agente principal. Planifica (`docs/TAREAS.md`), reparte el trabajo y coordina el bucle Develop ↔ Testing. |
+| Develop | [`.claude/agents/develop.md`](.claude/agents/develop.md) | Subagente que programa, con su guía de cómo programar en este proyecto. |
+| Testing | [`.claude/agents/testing.md`](.claude/agents/testing.md) | Subagente revisor. Comprueba el trabajo de Develop contra las directrices y le devuelve los fallos hasta que todo pasa. |
+| Directrices | [`docs/DIRECTRICES.md`](docs/DIRECTRICES.md) | D1–D16: las reglas que Develop tiene que cumplir y que Testing verifica. |
+
+Rastro del proceso:
+- [`docs/TAREAS.md`](docs/TAREAS.md): tablero de tareas del orquestador (T1–T4).
+- [`docs/REGISTRO-REVISIONES.md`](docs/REGISTRO-REVISIONES.md): cada ronda de revisión de Testing, con sus fallos y resultado.
+- El historial de git muestra cada bloque aprobado.
+
+## Funcionalidades
+
+- Registro, inicio y cierre de sesión con email/contraseña.
+- Crear hábitos (nombre + emoji), renombrarlos y borrarlos (con confirmación).
+- Marcar o desmarcar cada uno de los últimos 7 días.
+- Estadísticas por hábito: racha actual, mejor racha y % de cumplimiento de 30 días.
+- Datos privados por usuario, garantizados por las reglas de seguridad de Firestore (`firestore.rules`).
+
+## Desarrollo local
 
 ```bash
+cp .env.example .env.local   # rellena con la config web de tu proyecto Firebase
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npm run check` ejecuta typecheck, lint, tests (Vitest) y build.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Las claves no están en el repositorio: se leen de `NEXT_PUBLIC_FIREBASE_*` (en `.env.local` en local y en las variables de entorno de Vercel en producción).
