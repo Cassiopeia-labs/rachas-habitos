@@ -3,6 +3,7 @@ import {
   bestStreak,
   completionRate,
   currentStreak,
+  describeDay,
   lastNDays,
   toDayKey,
 } from "@/lib/streaks";
@@ -167,5 +168,22 @@ describe("completionRate", () => {
 
   it("includes days across a month change", () => {
     expect(completionRate(["2026-04-30", "2026-05-01"], 2, day(2026, 5, 1))).toBe(100);
+  });
+});
+
+describe("describeDay", () => {
+  it("returns the Spanish weekday, its initial and the day of the month", () => {
+    expect(describeDay("2026-11-23")).toEqual({ weekday: "Lunes", initial: "L", dayOfMonth: 23 });
+    expect(describeDay("2026-11-25")).toEqual({
+      weekday: "Miércoles",
+      initial: "X",
+      dayOfMonth: 25,
+    });
+    expect(describeDay("2026-11-29")).toEqual({ weekday: "Domingo", initial: "D", dayOfMonth: 29 });
+  });
+
+  it("handles month and year boundaries", () => {
+    expect(describeDay("2025-12-31")).toEqual({ weekday: "Miércoles", initial: "X", dayOfMonth: 31 });
+    expect(describeDay("2026-01-01")).toEqual({ weekday: "Jueves", initial: "J", dayOfMonth: 1 });
   });
 });

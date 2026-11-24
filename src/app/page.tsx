@@ -1,5 +1,5 @@
 import { AppHeader } from "@/components/AppHeader";
-import { HabitsPlaceholder } from "@/components/HabitsPlaceholder";
+import { HabitsPanel } from "@/components/HabitsPanel";
 import { RequireAuth } from "@/components/RequireAuth";
 
 export default function HomePage() {
@@ -10,7 +10,7 @@ export default function HomePage() {
         <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">
           Tus hábitos
         </h1>
-        <HabitsPlaceholder />
+        <HabitsPanel />
       </main>
     </RequireAuth>
   );

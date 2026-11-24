@@ -5,15 +5,14 @@ export const PASSWORD_MIN_LENGTH = 6;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Counts code points so an emoji in the name counts as one character.
-const lengthOf = (text: string): number => Array.from(text).length;
-
 export const validateHabitName = (name: string): ValidationResult => {
   const value = name.trim();
   if (value.length === 0) {
     return { ok: false, error: "Escribe un nombre para el hábito." };
   }
-  if (lengthOf(value) > HABIT_NAME_MAX_LENGTH) {
+  // UTF-16 units, the same measure as `string.size()` in firestore.rules and
+  // the input `maxLength`, so an emoji counts as 2 everywhere.
+  if (value.length > HABIT_NAME_MAX_LENGTH) {
     return {
       ok: false,
       error: `El nombre no puede tener más de ${HABIT_NAME_MAX_LENGTH} caracteres.`,
@@ -63,3 +62,28 @@ const DEFAULT_AUTH_ERROR = "No se ha podido completar la operación. Inténtalo 
 /** Translates a Firebase Auth error code (`auth/...`) into a Spanish message. */
 export const authErrorMessage = (code: string): string =>
   AUTH_ERROR_MESSAGES[code] ?? DEFAULT_AUTH_ERROR;
+
+/** Emojis offered when creating a habit. */
+export const HABIT_EMOJIS = ["💧", "🏃", "📚", "🧘", "🥗", "😴", "✍️", "🎸", "💪", "🌱"] as const;
+
+export const DEFAULT_HABIT_EMOJI = HABIT_EMOJIS[0];
+
+export const validateHabitEmoji = (emoji: string): ValidationResult =>
+  (HABIT_EMOJIS as readonly string[]).includes(emoji)
+    ? { ok: true, value: emoji }
+    : { ok: false, error: "Elige un emoji de la lista." };
+
+const DATA_ERROR_MESSAGES: Record<string, string> = {
+  "permission-denied": "No tienes permiso para hacer este cambio.",
+  unauthenticated: "Tu sesión ha caducado. Vuelve a iniciar sesión.",
+  unavailable: "No hay conexión con el servidor. Inténtalo de nuevo en un momento.",
+  "deadline-exceeded": "El servidor ha tardado demasiado en responder. Inténtalo de nuevo.",
+  "not-found": "Este hábito ya no existe.",
+  "resource-exhausted": "Se ha superado el límite de uso. Inténtalo más tarde.",
+};
+
+const DEFAULT_DATA_ERROR = "No se han podido guardar los cambios. Inténtalo de nuevo.";
+
+/** Translates a Firestore error code (e.g. `permission-denied`) into a Spanish message. */
+export const dataErrorMessage = (code: string): string =>
+  DATA_ERROR_MESSAGES[code] ?? DEFAULT_DATA_ERROR;

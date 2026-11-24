@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   authErrorMessage,
+  dataErrorMessage,
+  HABIT_EMOJIS,
   validateEmail,
+  validateHabitEmoji,
   validateHabitName,
   validatePassword,
 } from "@/lib/validation";
@@ -39,8 +42,17 @@ describe("validateHabitName", () => {
     expect(validateHabitName(`  ${"a".repeat(40)}  `).ok).toBe(true);
   });
 
-  it("counts an emoji as a single character", () => {
-    expect(validateHabitName(`${"a".repeat(39)}🔥`).ok).toBe(true);
+  it("counts an emoji as 2 characters, like the Firestore rules", () => {
+    expect(validateHabitName(`${"a".repeat(38)}🔥`).ok).toBe(true);
+    expect(validateHabitName(`${"a".repeat(39)}🔥`).ok).toBe(false);
+  });
+
+  it("rejects 40 code points that exceed 40 UTF-16 units", () => {
+    expect(validateHabitName(`${"a".repeat(30)}${"💧".repeat(10)}`)).toEqual({
+      ok: false,
+      error: "El nombre no puede tener más de 40 caracteres.",
+    });
+    expect(validateHabitName("💧".repeat(20)).ok).toBe(true);
   });
 });
 
@@ -86,5 +98,38 @@ describe("authErrorMessage", () => {
     const message = authErrorMessage("auth/something-new");
     expect(message).not.toContain("auth/");
     expect(message).toBe("No se ha podido completar la operación. Inténtalo de nuevo.");
+  });
+});
+
+describe("validateHabitEmoji", () => {
+  it("accepts every emoji offered in the picker", () => {
+    for (const emoji of HABIT_EMOJIS) {
+      expect(validateHabitEmoji(emoji)).toEqual({ ok: true, value: emoji });
+    }
+  });
+
+  it("rejects empty or unknown values with a Spanish message", () => {
+    expect(validateHabitEmoji("")).toEqual({ ok: false, error: "Elige un emoji de la lista." });
+    expect(validateHabitEmoji("<script>")).toEqual({
+      ok: false,
+      error: "Elige un emoji de la lista.",
+    });
+  });
+});
+
+describe("dataErrorMessage", () => {
+  it("translates known Firestore codes to Spanish", () => {
+    expect(dataErrorMessage("permission-denied")).toBe(
+      "No tienes permiso para hacer este cambio.",
+    );
+    expect(dataErrorMessage("unavailable")).toBe(
+      "No hay conexión con el servidor. Inténtalo de nuevo en un momento.",
+    );
+  });
+
+  it("falls back to a generic Spanish message for unknown codes", () => {
+    const message = dataErrorMessage("something-new");
+    expect(message).not.toContain("something-new");
+    expect(message).toBe("No se han podido guardar los cambios. Inténtalo de nuevo.");
   });
 });

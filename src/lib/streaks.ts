@@ -65,3 +65,24 @@ export const completionRate = (dates: DayKey[], days: number, today: Date): numb
   const done = lastNDays(days, today).filter((day) => completed.has(day)).length;
   return Math.round((done / days) * 100);
 };
+
+const WEEKDAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+// Spanish calendar initials: "X" for miércoles avoids clashing with "M" for martes.
+const WEEKDAY_INITIALS = ["D", "L", "M", "X", "J", "V", "S"];
+
+export type DayInfo = {
+  /** Full Spanish weekday name, e.g. "Lunes". */
+  weekday: string;
+  /** One-letter Spanish weekday initial, e.g. "X" for miércoles. */
+  initial: string;
+  dayOfMonth: number;
+};
+
+export const describeDay = (key: DayKey): DayInfo => {
+  const date = fromDayKey(key);
+  return {
+    weekday: WEEKDAYS[date.getDay()],
+    initial: WEEKDAY_INITIALS[date.getDay()],
+    dayOfMonth: date.getDate(),
+  };
+};

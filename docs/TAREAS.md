@@ -4,8 +4,8 @@
 |---|---|---|
 | T1 | Base: Firebase, sesión, login/registro, rutas protegidas, layout | hecha |
 | T2 | Lógica pura de rachas y validación + tests | hecha |
-| T3 | Panel de hábitos: CRUD, marcar días, estadísticas | pendiente |
-| T4 | Reglas de Firestore + pulido (a11y, responsive, textos) | pendiente |
+| T3 | Panel de hábitos: CRUD, marcar días, estadísticas | hecha |
+| T4 | Reglas de Firestore + pulido (a11y, responsive, textos) | hecha |
 
 ## T1 — Base y autenticación
 - `src/lib/firebase.ts` inicializa Firebase desde `NEXT_PUBLIC_FIREBASE_*` (sin inicializar dos veces).

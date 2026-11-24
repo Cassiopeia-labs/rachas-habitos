@@ -1,6 +1,36 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /users/{uid}/habits/{habitId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == uid;
+      }
+
+      function isValidHabit(data) {
+        return data.keys().hasOnly(['name', 'emoji', 'completedDates', 'createdAt'])
+          && data.keys().hasAll(['name', 'emoji', 'completedDates', 'createdAt'])
+          && data.name is string
+          && data.name.size() >= 1
+          && data.name.size() <= 40
+          && data.name.trim().size() >= 1
+          && data.emoji is string
+          && data.emoji.size() >= 1
+          && data.emoji.size() <= 16
+          && data.completedDates is list
+          && data.completedDates.size() <= 1000
+          && data.createdAt is timestamp;
+      }
+
+      allow read, delete: if isOwner();
+      allow create: if isOwner()
+        && isValidHabit(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+      allow update: if isOwner()
+        && isValidHabit(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    // Everything else is denied.
     match /{document=**} {
       allow read, write: if false;
     }
