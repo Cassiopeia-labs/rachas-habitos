@@ -2,8 +2,8 @@
 
 | # | Tarea | Estado |
 |---|---|---|
-| T1 | Base: Firebase, sesión, login/registro, rutas protegidas, layout | pendiente |
-| T2 | Lógica pura de rachas y validación + tests | pendiente |
+| T1 | Base: Firebase, sesión, login/registro, rutas protegidas, layout | hecha |
+| T2 | Lógica pura de rachas y validación + tests | hecha |
 | T3 | Panel de hábitos: CRUD, marcar días, estadísticas | pendiente |
 | T4 | Reglas de Firestore + pulido (a11y, responsive, textos) | pendiente |
 
